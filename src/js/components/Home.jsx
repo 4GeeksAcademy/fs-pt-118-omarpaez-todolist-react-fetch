@@ -73,7 +73,7 @@ const Home = () => {
 	}
 
 	const createUser = () => { //he dejado esta funcion, en el caso de que el usuario omarpaezdev este eliminado en el servidor me devuelve error 404 y crea el usuario. 
-		
+
 		fetch('https://playground.4geeks.com/todo/users/' + user, {
 			method: 'POST',
 			headers: {
@@ -83,23 +83,23 @@ const Home = () => {
 		})
 			.then(resp => resp.json())
 			.then(data => {
-				console.log('Usuario creado:',data.name)
-             return loadData()
+				console.log('Usuario creado:', data.name)
+				return loadData()
 			})
 			.catch(error => console.log(error))
 
 
 	}
 
- const loadData = () =>{
-	fetch('https://playground.4geeks.com/todo/users/' + user)
+	const loadData = () => {
+		fetch('https://playground.4geeks.com/todo/users/' + user)
 			.then(resp => {
 
 				//if (resp.status === 404) return createUser() //si el usuario guardado en user no existe ejecuta la funcion para crearlo
 				//manejamos errores, siempre se manejan
 				if (!resp.ok) {
 					//lanzamos un error si el OK es false (significa que hubo un error en el pedido)
-					 createUser()
+					createUser()
 					throw new Error(`${resp.status} ${resp.statusText}`)
 				}
 				return resp.json() //aqui transformamos la respuesta de texto a objeto js
@@ -107,11 +107,11 @@ const Home = () => {
 			.then(data => setSavedtasks(data.todos))
 			.catch(error => console.log(error))
 
- }
+	}
 
- const deleteAllTask = () =>{
+	const deleteAllTask = () => {
 
-	fetch('https://playground.4geeks.com/todo/users/' + user,
+		fetch('https://playground.4geeks.com/todo/users/' + user,
 			{
 				method: "DELETE"
 			})
@@ -120,21 +120,21 @@ const Home = () => {
 					throw new Error(`Error al eliminar la tarea: ${resp.status}`);
 
 				}
-				
+
 				console.log("Tareas eliminadas correctamente")
-				 createUser()
+				createUser()
 			})
 			.catch((error) => console.error(error))
 
 
 
 
- }
+	}
 
 	useEffect(() => {
 		//fetch por promesas
 		loadData()
-		
+
 
 	}, []) // array de dependencias vacio para que se ejecute onLoad y una vez.
 
@@ -144,9 +144,27 @@ const Home = () => {
 			<div className="text-center">
 				<h1 className="text-center mt-5 bg-primary bg-gradient p-2 text-white">To do List</h1>
 
-				<Inputtodolist data={savedTasks} onAddTask={addTask} onDeleteTask={deleteTask} onEditTask={editTask} onDoneTask={editTaskDone} sendUser={user}  />
-				{savedTasks.length > 0 && 
-				<input className="btn btn-primary btn-sm my-4" type="button" value="Eliminar Tareas" onClick={deleteAllTask}/>}
+				<Inputtodolist data={savedTasks} onAddTask={addTask} onDeleteTask={deleteTask} onEditTask={editTask} onDoneTask={editTaskDone} sendUser={user} />
+				{savedTasks.length > 0 &&
+					<input className="btn btn-primary btn-sm my-4" type="button" value="Eliminar Tareas" data-bs-toggle="modal" data-bs-target="#exampleModal" />
+				}
+
+
+			</div>
+
+			<div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div className="modal-dialog modal-dialog-centered">
+					<div className="modal-content">
+						
+						<div className="modal-body text-center fs-5">
+							Vas a eliminar todas las tareas. ¿Estas seguro?
+						</div>
+						<div className="modal-footer">
+							<button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+							<button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={deleteAllTask}>Confirmar</button>
+						</div>
+					</div>
+				</div>
 			</div>
 
 		</>
